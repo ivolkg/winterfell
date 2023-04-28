@@ -203,6 +203,9 @@ pub enum ExampleType {
     },
     /// Compute a fibonacci sequence but by summing the last ten digits
     TenAcci {
+        /// Length of Tenacci sequence; must be a multiple of ten
+        #[structopt(short = "n", default_value = "163840")]
+        sequence_length: usize,
     },
 }
 

@@ -62,8 +62,8 @@ fn main() {
         ExampleType::LamportT { num_signers } => {
             lamport::threshold::get_example(&options, num_signers)
         }
-        ExampleType::TenAcci {  } => {
-           unimplemented!() 
+        ExampleType::TenAcci { sequence_length } => {
+            fibonacci::tenacci::get_example(&options, sequence_length)
         }
     }
     .expect("The example failed to initialize.");

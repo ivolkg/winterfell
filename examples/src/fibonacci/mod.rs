@@ -9,4 +9,6 @@ pub mod fib_small;
 pub mod mulfib2;
 pub mod mulfib8;
 
+pub mod tenacci;
+
 mod utils;
