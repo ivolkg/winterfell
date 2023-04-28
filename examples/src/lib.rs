@@ -72,6 +72,7 @@ pub struct ExampleOptions {
 }
 
 impl ExampleOptions {
+    /// q: queries, b: blowup factor 
     pub fn to_proof_options(&self, q: usize, b: usize) -> (ProofOptions, HashFunction) {
         let num_queries = self.num_queries.unwrap_or(q);
         let blowup_factor = self.blowup_factor.unwrap_or(b);
@@ -199,6 +200,9 @@ pub enum ExampleType {
         /// Number of signers; must be one less than a power of two
         #[structopt(short = "n", default_value = "3")]
         num_signers: usize,
+    },
+    /// Compute a fibonacci sequence but by summing the last ten digits
+    TenAcci {
     },
 }
 
