@@ -47,14 +47,33 @@ impl<H: ElementHasher> TenAcciProver<H> {
                 state[7] = two.exp(6);
                 state[8] = two.exp(7);
                 state[9] = two.exp(8);
+                let sum: BaseElement = state.iter().fold(BaseElement::ZERO, |acc, &x| acc + x);
+                println!("First Sum: {}", sum);
             },
             |_, state| {
+                println!("Update state");
+                for s in state.to_owned() {
+                    print!("{}\t", s);
+                }
+                println!("");
                 let mut temp = state.to_owned();
+                println!("Temp state");
+                for s in temp.to_owned() {
+                    print!("{}\t", s);
+                }
+                println!("");
                 for _ in 0..temp.len() {
-                    let mut next = temp.iter().fold(BaseElement::ONE, |acc, &val| acc + val);
+                    let mut next = temp.iter().fold(BaseElement::ZERO, |acc, &val| acc + val);
+                    println!("Next = {}", next);
                     temp.rotate_left(1);
                     core::mem::swap(&mut next, &mut temp.last_mut().unwrap());
                 }
+                println!("Temp state");
+                for s in temp.to_owned() {
+                    print!("{}\t", s);
+                }
+                let sum: BaseElement = temp.iter().fold(BaseElement::ZERO, |acc, &x| acc + x);
+                println!("Sum: {}", sum);
                 for i in 0..state.len() {
                     state[i] = temp[i];
                 }

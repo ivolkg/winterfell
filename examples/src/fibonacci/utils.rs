@@ -27,6 +27,7 @@ pub fn compute_tenacci_term<E: FieldElement>(n: usize) -> E {
         }
         ta[i] = sum;
     }
+    println!("First ten: {:?}", ta);
 
     for _ in 0..(n-9) {
         let mut t10 = ta.iter().fold(E::ZERO, |acc, &val| acc + val);

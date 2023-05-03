@@ -24,6 +24,14 @@ impl Air for TenAcciAir {
         let degrees = vec![
             TransitionConstraintDegree::new(1),
             TransitionConstraintDegree::new(1),
+            TransitionConstraintDegree::new(1),
+            TransitionConstraintDegree::new(1),
+            TransitionConstraintDegree::new(1),
+            TransitionConstraintDegree::new(1),
+            TransitionConstraintDegree::new(1),
+            TransitionConstraintDegree::new(1),
+            TransitionConstraintDegree::new(1),
+            TransitionConstraintDegree::new(1),
         ];
         assert_eq!(TRACE_WIDTH, trace_info.width());
         TenAcciAir {
@@ -60,6 +68,21 @@ impl Air for TenAcciAir {
                 + current[7]
                 + current[8]
                 + current[9],
+        );
+        println!(
+            "{} = - {} + {} + {} + {} + {} + {} + {} + {} + {} + {} + {}",
+            result[0],
+            next[0],
+            current[0],
+            current[1],
+            current[2],
+            current[3],
+            current[4],
+            current[5],
+            current[6],
+            current[7],
+            current[8],
+            current[9],
         );
         result[1] = are_equal(
             next[1],
