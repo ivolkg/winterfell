@@ -10,16 +10,8 @@ use winterfell::{
     FieldExtension, ProofOptions, StarkProof, VerifierError,
 };
 
-pub mod fibonacci;
 #[cfg(feature = "std")]
-pub mod lamport;
-#[cfg(feature = "std")]
-pub mod merkle;
-pub mod rescue;
-#[cfg(feature = "std")]
-pub mod rescue_raps;
-pub mod utils;
-pub mod vdf;
+pub mod do_work;
 
 #[cfg(test)]
 mod tests;
@@ -72,7 +64,6 @@ pub struct ExampleOptions {
 }
 
 impl ExampleOptions {
-    /// q: queries, b: blowup factor 
     pub fn to_proof_options(&self, q: usize, b: usize) -> (ProofOptions, HashFunction) {
         let num_queries = self.num_queries.unwrap_or(q);
         let blowup_factor = self.blowup_factor.unwrap_or(b);
@@ -125,87 +116,13 @@ impl ExampleOptions {
 #[derive(StructOpt, Debug)]
 //#[structopt(about = "available examples")]
 pub enum ExampleType {
-    /// Compute a Fibonacci sequence using trace table with 2 registers
-    Fib {
-        /// Length of Fibonacci sequence; must be a power of two
-        #[structopt(short = "n", default_value = "1048576")]
-        sequence_length: usize,
-    },
-    /// Compute a Fibonacci sequence using trace table with 8 registers
-    Fib8 {
-        /// Length of Fibonacci sequence; must be a power of two
-        #[structopt(short = "n", default_value = "1048576")]
-        sequence_length: usize,
-    },
-    /// Compute a multiplicative Fibonacci sequence using trace table with 2 registers
-    Mulfib {
-        /// Length of Fibonacci sequence; must be a power of two
-        #[structopt(short = "n", default_value = "1048576")]
-        sequence_length: usize,
-    },
-    /// Compute a multiplicative Fibonacci sequence using trace table with 8 registers
-    Mulfib8 {
-        /// Length of Fibonacci sequence; must be a power of two
-        #[structopt(short = "n", default_value = "1048576")]
-        sequence_length: usize,
-    },
-    /// Compute a Fibonacci sequence using trace table with 2 registers in `f64` field.
-    FibSmall {
-        /// Length of Fibonacci sequence; must be a power of two
-        #[structopt(short = "n", default_value = "65536")]
-        sequence_length: usize,
-    },
-    /// Execute a simple VDF function
-    Vdf {
-        /// Number of steps in the VDF function; must be a power of two
-        #[structopt(short = "n", default_value = "1048576")]
-        num_steps: usize,
-    },
-    /// Similar to the VDF example, but exempts an extra row from transition constraints.
-    VdfExempt {
-        /// Number of steps in the VDF function; must be one less than a power of two
-        #[structopt(short = "n", default_value = "1048575")]
-        num_steps: usize,
-    },
-    /// Compute a hash chain using Rescue hash function
-    Rescue {
-        /// Length of the hash chain; must be a power of two
-        #[structopt(short = "n", default_value = "1024")]
-        chain_length: usize,
-    },
-    /// Compute two hash chains absorbing sequences that are a permutation of each other
-    #[cfg(feature = "std")]
-    RescueRaps {
-        /// Length of the hash chain; must be a power of two and at least 4
-        #[structopt(short = "n", default_value = "1024")]
-        chain_length: usize,
-    },
-    /// Compute a root of a Merkle path using Rescue hash function
-    #[cfg(feature = "std")]
-    Merkle {
-        /// Depth of the Merkle tree; must be one less than a power of two
-        #[structopt(short = "n", default_value = "7")]
-        tree_depth: usize,
-    },
-    /// Compute an aggregate Lamport+ signature
-    #[cfg(feature = "std")]
-    LamportA {
-        /// Number of signatures to aggregate; must be a power of two
-        #[structopt(short = "n", default_value = "4")]
-        num_signatures: usize,
-    },
-    /// Compute a threshold Lamport+ signature
-    #[cfg(feature = "std")]
-    LamportT {
-        /// Number of signers; must be one less than a power of two
-        #[structopt(short = "n", default_value = "3")]
-        num_signers: usize,
-    },
-    /// Compute a fibonacci sequence but by summing the last ten digits
-    TenAcci {
-        /// Length of Tenacci sequence; must be a multiple of ten
-        #[structopt(short = "n", default_value = "80")]
-        sequence_length: usize,
+    // Do work example
+    DoWork {
+        /// Lenght of trace using one column and number of traces
+        #[structopt(short = "n", long = "num_traces", default_value = "512")]
+        num_traces: usize,
+        #[structopt(short = "l", long = "traces_len", default_value = "1024")]
+        trace_lenght: usize,
     },
 }
 
@@ -213,7 +130,7 @@ pub enum ExampleType {
 /// support all listed hash functions.
 ///
 /// Choice of a hash function has a direct impact on proof generation time, proof size, and proof
-/// soundness. In general, sounds of the proof is bounded by the collision resistance of the hash
+/// soundness. In general, ssounds of the proof is bounded by the collision resistance of the hash
 /// function used by the protocol.
 #[repr(u8)]
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
@@ -224,6 +141,7 @@ pub enum HashFunction {
     Blake3_192,
 
     /// BLAKE3 hash function with 256 bit output.
+
     ///
     /// When this function is used in the STARK protocol, proof security cannot exceed 128 bits.
     Blake3_256,

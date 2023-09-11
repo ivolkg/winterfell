@@ -5,7 +5,7 @@ use winterfell::{
 };
 
 fn main() {
-    let num_steps = 1048576;
+    let num_steps = 1024;
     let first_step = BaseElement::new(3);
     let last_step = do_work(first_step, num_steps);
     println!("Step {} is: {}", num_steps - 1, last_step);
